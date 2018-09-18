@@ -5,16 +5,16 @@ import pymysql
 import pymysql.cursors
 import math
 import copy
-
+from constantes import *
 """CONNECT TO THE DATABASE"""
 
 try :
-	connection = pymysql.connect(host='127.0.0.1',
-	                             user='root',
-	                             password='azerty',
-	                             db='P5',
+	connection = pymysql.connect(host=HOST,
+	                             user=USER,
+	                             password=PASSWORD,
+	                             db=DB,
 	                             charset='utf8mb4',
-	                             port = 3306,
+	                             port = PORT,
 	                             cursorclass=pymysql.cursors.DictCursor)
 except :
 	print("erreur de connexion")
@@ -53,7 +53,7 @@ with connection.cursor() as cursor:
 	connection.commit()
 
 """LINK PRODUCT CATEGORY"""
-categories = ['bordeaux', 'pates-a-tartiner-au-chocolat', 'Bières_françaises', 'Barres_chocolatées', 'Sorbets', 'steaks']
+categories = NAME_CATEGORIES
 """generate question"""
 nb_series = range(1,len(categories)+1)
 """condition pour la boucle"""
@@ -198,7 +198,7 @@ def Add_product():
 def select_and_substitut():
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		print(result)
@@ -207,7 +207,7 @@ def select_and_substitut():
 
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 10"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		print(result)
