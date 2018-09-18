@@ -31,12 +31,8 @@ with connection.cursor() as cursor:
 	cursor.execute(sql, ())
 	connection.commit()
 
-with connection.cursor() as cursor:
-	sql = "DELETE FROM `SUBSTITUT`"
-	cursor.execute(sql, ())
-	connection.commit()
-
 """RESET THE COUNTERS"""
+
 with connection.cursor() as cursor:
 	sql = "ALTER TABLE `CATEGORIES` AUTO_INCREMENT=0;"
 	cursor.execute(sql, ())
@@ -44,11 +40,6 @@ with connection.cursor() as cursor:
 
 with connection.cursor() as cursor:
 	sql = "ALTER TABLE `PRODUIT` AUTO_INCREMENT=0;"
-	cursor.execute(sql, ())
-	connection.commit()
-
-with connection.cursor() as cursor:
-	sql = "ALTER TABLE `SUBSTITUT` AUTO_INCREMENT=0;"
 	cursor.execute(sql, ())
 	connection.commit()
 
@@ -68,7 +59,7 @@ while generate_question in nb_series :
 propostion = str(propostion)
 """function link categories to BDD"""
 def link(l = 0) :
-	link_categories = 'https://fr.openfoodfacts.org/categorie/' + categories[l] + '.json'
+	link_categories = 'https://fr.openfoodfacts.org/categorie/' + categories[l]
 	return link_categories
 """test fonction"""
 link_categories = link(l = 2)
@@ -207,7 +198,7 @@ def select_and_substitut():
 
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 10"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		print(result)
