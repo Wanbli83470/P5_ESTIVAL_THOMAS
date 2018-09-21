@@ -6,45 +6,57 @@ import pymysql.cursors
 import math
 import copy
 from constantes import *
+from gestion_BDD import *
 """CONNECT TO THE DATABASE"""
-
 try :
-	connection = pymysql.connect(host=HOST,
-	                             user=USER,
-	                             password=PASSWORD,
-	                             db=DB,
-	                             charset='utf8mb4',
-	                             port = PORT,
-	                             cursorclass=pymysql.cursors.DictCursor)
+	connection = pymysql.connect(host=HOST, #variable in file constantes.py
+		                             user=USER,
+		                             password=PASSWORD,
+		                             db=DB,
+		                             charset='utf8mb4',
+		                             port = PORT,
+		                             cursorclass=pymysql.cursors.DictCursor)
 except :
-	print("erreur de connexion")
+		print("erreur de connexion")
+
+def cleaning_tables():
 
 	"""CLEANING TABLES"""
 
-with connection.cursor() as cursor:
-	sql = "DELETE FROM `PRODUIT`"
-	cursor.execute(sql, ())
-	connection.commit()
+	with connection.cursor() as cursor:
+		sql = "DELETE FROM `PRODUIT`"
+		cursor.execute(sql, ())
+		connection.commit()
 
-with connection.cursor() as cursor:
-	sql = "DELETE FROM `CATEGORIES`;"
-	cursor.execute(sql, ())
-	connection.commit()
+	with connection.cursor() as cursor:
+		sql = "DELETE FROM `CATEGORIES`;"
+		cursor.execute(sql, ())
+		connection.commit()
 
-"""RESET THE COUNTERS"""
+	with connection.cursor() as cursor:
+		sql = "DELETE FROM `SUBSTITUT`;"
+		cursor.execute(sql, ())
+		connection.commit()
+def reset_counter():
+	"""RESET THE COUNTERS"""
 
-with connection.cursor() as cursor:
-	sql = "ALTER TABLE `CATEGORIES` AUTO_INCREMENT=0;"
-	cursor.execute(sql, ())
-	connection.commit()
+	with connection.cursor() as cursor:
+		sql = "ALTER TABLE `CATEGORIES` AUTO_INCREMENT=0;"
+		cursor.execute(sql, ())
+		connection.commit()
 
-with connection.cursor() as cursor:
-	sql = "ALTER TABLE `PRODUIT` AUTO_INCREMENT=0;"
-	cursor.execute(sql, ())
-	connection.commit()
+	with connection.cursor() as cursor:
+		sql = "ALTER TABLE `PRODUIT` AUTO_INCREMENT=0;"
+		cursor.execute(sql, ())
+		connection.commit()
 
+	with connection.cursor() as cursor:
+		sql = "ALTER TABLE `SUBSTITUT` AUTO_INCREMENT=0;"
+		cursor.execute(sql, ())
+		connection.commit()
+		"""CLEANING FILES TXT"""
 """LINK PRODUCT CATEGORY"""
-categories = NAME_CATEGORIES
+categories = NAME_CATEGORIES #variable in file constantes.py
 """generate question"""
 nb_series = range(1,len(categories)+1)
 """condition pour la boucle"""
@@ -168,19 +180,19 @@ def Add_product():
 
 	"""INSERT TO BDD"""
 
-	xy = 0
+	liste_position = 0
 	try :
-		while xy < nb_product :
+		while liste_position < nb_product :
 			with connection.cursor() as cursor:
 			    sql = "INSERT INTO `PRODUIT` (`NOM`,`PRODUIT_URL`,`NUTRISCORE`, `CATEGORIE_ID`) VALUES (%s, %s, %s, %s)"
-			    cursor.execute(sql, (name[xy], url[xy], ns_number[xy], N_ID))
+			    cursor.execute(sql, (name[liste_position], url[liste_position], ns_number[liste_position], N_ID))
 
 			connection.commit()
-			xy = xy + 1
-			if xy == xy + 10:
-				print(str(xy)+"produits enregistré dans la BDD ! ")
-			if xy == nb_product :
-				print(str(xy)+"produits enregistré dans la BDD ! ")
+			liste_position = liste_position + 1
+			if liste_position == liste_position + 10:
+				print(str(liste_position)+"produits enregistré dans la BDD ! ")
+			if liste_position == nb_product :
+				print(str(liste_position)+"produits enregistré dans la BDD ! ")
 	except :
 		pass
 		
@@ -252,11 +264,11 @@ def select_and_substitut():
 					connection.commit()
 				print("enregistrement terminé !")
 				mode_substitut = 1
-			elif save_BDD > 2 :
-				print("{} n'est pas dans les numéros proposés\n".format(save_BDD))
 			elif save_BDD == 2:
 				print("\n enregistrement non effectuée, \n retour vers le menu")
 				mode_substitut = 1
+			elif save_BDD > 2 :
+				print("{} n'est pas dans les numéros proposés\n".format(save_BDD))
 		except ValueError :
 			if len(save_BDD) > 1 :
 				print("\nOops! {} est un mot, veuillez recommencer : \n".format(save_BDD))
@@ -269,7 +281,7 @@ continu = 0
 while continu == 0 :
 	try :
 		print(transition)
-		terminal_mode = input("\n1 - Quel aliment souhaitez-vous remplacer ? \n2 - Retrouver mes aliments substitués. \n3 - Sortir du programme ?")
+		terminal_mode = input("\n1 - Quel aliment souhaitez-vous remplacer ? \n2 - Retrouver mes aliments substitués. \n3 - Sortir du programme ? \n4 - Nettoyer la Base de données")
 		terminal_mode = int(terminal_mode)
 
 		"""mode remplacement"""
@@ -332,7 +344,12 @@ while continu == 0 :
 			print("Aurevoir ! ")
 			continu = 1
 
-		elif terminal_mode >= 3 :
+		if terminal_mode == 4 :
+			delete_txt()
+			reset_counter()
+			cleaning_tables()
+
+		elif terminal_mode > 4 :
 			print("{} n'est pas dans les numéros proposés\n".format(terminal_mode))
 
 	except ValueError :
