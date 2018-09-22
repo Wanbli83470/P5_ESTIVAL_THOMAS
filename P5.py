@@ -204,6 +204,9 @@ def select_and_substitut():
 		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
+		result = str(result)
+		result = result.replace('{','\n')
+		result = result.replace('}','')
 		print(result)
 
 	choice_produit = input("\n Indiquer le numéro du produit que vous souhaitez remplacer : ")
@@ -213,7 +216,11 @@ def select_and_substitut():
 		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
+		result = str(result)
+		result = result.replace('{','\n')
+		result = result.replace('}','')
 		print(result)
+
 
 	choice_substitut = input("\n Indiquer le numéro du produit que vous souhaitez consulter ")
 	print(transition)
@@ -230,7 +237,6 @@ def select_and_substitut():
 			n_link+=(x)
 			if len(n_link) == 13 :
 				break
-			print(len(n_link))
 			
 
 	link_url = "https://fr.openfoodfacts.org/api/v0/produit/{}.json".format(n_link)
@@ -333,7 +339,11 @@ while continu == 0 :
 				sql = "SELECT `NOM`,`STORE`,`SUBSTITUT_ID` FROM `SUBSTITUT`"
 				cursor.execute(sql, ())
 				my_product = cursor.fetchall()
+				my_product = str(my_product)
+				my_product = my_product.replace('{','\n')
+				my_product = my_product.replace('}','')
 				print(my_product)
+
 
 			terminal_mode = 0
 
@@ -346,8 +356,8 @@ while continu == 0 :
 
 		if terminal_mode == 4 :
 			delete_txt()
-			reset_counter()
 			cleaning_tables()
+			reset_counter()
 
 		elif terminal_mode > 4 :
 			print("{} n'est pas dans les numéros proposés\n".format(terminal_mode))
