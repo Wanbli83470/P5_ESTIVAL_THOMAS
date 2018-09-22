@@ -1,2 +1,1 @@
 Liste de mes catégories produits dans ma BDD :
-Bières_françaises 
