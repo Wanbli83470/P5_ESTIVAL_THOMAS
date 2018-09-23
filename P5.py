@@ -32,7 +32,6 @@ read_txt = str
 with open("BDD_save.txt", "r") as fichier_texte:
 	for l in fichier_texte :
 		read_txt = l
-"""on test si la catégorie est presente dans la variable donc dans le fichier_texte"""
 
 
 def cleaning_tables():
@@ -40,34 +39,34 @@ def cleaning_tables():
 	"""CLEANING TABLES"""
 
 	with connection.cursor() as cursor:
-		sql = "DELETE FROM `PRODUIT`"
+		sql = "DELETE FROM PRODUITS"
 		cursor.execute(sql, ())
 		connection.commit()
 
 	with connection.cursor() as cursor:
-		sql = "DELETE FROM `CATEGORIES`;"
+		sql = "DELETE FROM CATEGORIES;"
 		cursor.execute(sql, ())
 		connection.commit()
 
 	with connection.cursor() as cursor:
-		sql = "DELETE FROM `SUBSTITUT`;"
+		sql = "DELETE FROM SUBSTITUTS;"
 		cursor.execute(sql, ())
 		connection.commit()
 def reset_counter():
 	"""RESET THE COUNTERS"""
 
 	with connection.cursor() as cursor:
-		sql = "ALTER TABLE `CATEGORIES` AUTO_INCREMENT=0;"
+		sql = "ALTER TABLE CATEGORIES AUTO_INCREMENT=0;"
 		cursor.execute(sql, ())
 		connection.commit()
 
 	with connection.cursor() as cursor:
-		sql = "ALTER TABLE `PRODUIT` AUTO_INCREMENT=0;"
+		sql = "ALTER TABLE PRODUITS AUTO_INCREMENT=0;"
 		cursor.execute(sql, ())
 		connection.commit()
 
 	with connection.cursor() as cursor:
-		sql = "ALTER TABLE `SUBSTITUT` AUTO_INCREMENT=0;"
+		sql = "ALTER TABLE SUBSTITUTS AUTO_INCREMENT=0;"
 		cursor.execute(sql, ())
 		connection.commit()
 		"""CLEANING FILES TXT"""
@@ -91,8 +90,9 @@ def link(l = 0) :
 	return link_categories
 """test fonction"""
 link_categories = link(l = 2)
+print(type(link_categories))
 """condition for add product"""
-mode_substitut_categorie = []
+
 
 """Separation line"""
 
@@ -108,9 +108,7 @@ def Add_product():
 	    for data in product ["products"]:
 	        """nutriscore = (data["nutrition_grades"])"""
 	        url.append((data["url"]))
-
 	        name.append((data["product_name"]))
-
 	        ns.append((data["nutrition_grades_tags"]))
 	"""creation des listes"""
 
@@ -181,7 +179,7 @@ def Add_product():
 
 	with connection.cursor() as cursor:
 
-		sql = "SELECT MAX(`ID`) FROM `CATEGORIES`"
+		sql = "SELECT MAX(`ID`) FROM CATEGORIES"
 		cursor.execute(sql, ())
 		ID = cursor.fetchall()
 
@@ -200,15 +198,11 @@ def Add_product():
 	try :
 		while liste_position < nb_product :
 			with connection.cursor() as cursor:
-			    sql = "INSERT INTO `PRODUIT` (`NOM`,`PRODUIT_URL`,`NUTRISCORE`, `CATEGORIE_ID`) VALUES (%s, %s, %s, %s)"
+			    sql = "INSERT INTO PRODUITS (`NOM`,`PRODUIT_URL`,`NUTRISCORE`, `CATEGORIE_ID`) VALUES (%s, %s, %s, %s)"
 			    cursor.execute(sql, (name[liste_position], url[liste_position], ns_number[liste_position], N_ID))
 
 			connection.commit()
 			liste_position = liste_position + 1
-			if liste_position == liste_position + 10:
-				print(str(liste_position)+"produits enregistré dans la BDD ! ")
-			if liste_position == nb_product :
-				print(str(liste_position)+"produits enregistré dans la BDD ! ")
 	except :
 		pass
 		
@@ -217,7 +211,7 @@ def Add_product():
 def select_and_substitut():
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUITS INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		result = str(result)
@@ -229,7 +223,7 @@ def select_and_substitut():
 
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM `PRODUIT` INNER JOIN `CATEGORIES` ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUITS INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5 "
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		result = str(result)
@@ -242,7 +236,7 @@ def select_and_substitut():
 	print(transition)
 	with connection.cursor() as cursor:
 
-		sql = "SELECT `PRODUIT_URL` FROM `PRODUIT` WHERE `PRODUIT_ID`=%s"
+		sql = "SELECT `PRODUIT_URL` FROM PRODUITS WHERE `PRODUIT_ID`=%s"
 		cursor.execute(sql, (choice_substitut))
 		link_result = cursor.fetchall()
 
@@ -280,7 +274,7 @@ def select_and_substitut():
 			if save_BDD == 1 :
 				print("Enregistrement en cours...")
 				with connection.cursor() as cursor:
-					sql = "INSERT INTO `SUBSTITUT` (`NOM`,`STORE`,`SUBSTITUT_URL`,`DESCRIPTION`) VALUES (%s, %s, %s, %s)"
+					sql = "INSERT INTO SUBSTITUTS (`NOM`,`STORE`,`SUBSTITUT_URL`,`DESCRIPTION`) VALUES (%s, %s, %s, %s)"
 					cursor.execute(sql, (product_name, stores, link_url, description))
 
 					connection.commit()
@@ -310,58 +304,43 @@ while continu == 0 :
 		while terminal_mode == 1 :
 			print(transition)
 			"""condition for mode_substitut catégorie"""
-			print(mode_substitut_categorie)
-			temp_categorie = int
+
 			try :
 				keyboard_input = input ("choissisez votre catégorie de produit : " + propostion)
 				keyboard_input = int(keyboard_input)
 				choice = str
 				choice = categories[keyboard_input - 1]
 				name_categories = str
+				name_categories = categories[keyboard_input - 1]
+				link_categories = link(l = keyboard_input - 1)
+
+				fichier_texte = open("BDD_save.txt", "a")
+				with open("BDD_save.txt", "r") as fichier_texte:
+					for l in fichier_texte :
+						read_txt = l
 
 				if choice in read_txt and keyboard_input in nb_series :
 					print(choice + " est bien présent dans la base de données")
-					name_categories = categories[keyboard_input - 1]
-					link_categories = link(l = keyboard_input - 1)
-					link_categories = link(l = keyboard_input - 1)
-					select_and_substitut()
-				else :
-					print(choice + " n'est pas présent dans la base de données")
-					with open("BDD_save.txt", "a") as fichier_texte:
-						fichier_texte.write("\n" + choice + " ")
-						fichier_texte.close()
-
-					with connection.cursor() as cursor:
-						sql = "INSERT INTO `CATEGORIES` (`NOM`,`LINK_OFF`) VALUES (%s, %s)"
-						cursor.execute(sql, (name_categories, link_categories))
-					mode_substitut_categorie.append(temp_categorie)
-					connection.commit()
-					Add_product()
-					print(transition)
 					select_and_substitut()
 
-				if keyboard_input in nb_series :
-					choice = categories[keyboard_input - 1]
-					name_categories = categories[keyboard_input - 1]
-					link_categories = link(l = keyboard_input - 1)
-					temp_categorie = keyboard_input
-					print(temp_categorie)
 				elif keyboard_input not in nb_series :
 					print("{} n'est pas dans les numéros proposés\n".format(keyboard_input))
 					break
-					"""a supprimer"""
-				if keyboard_input in mode_substitut_categorie :
-					print("catégories {} existante dans la BDD".format(name_categories))
-					select_and_substitut()
+
 				else :
+					print(choice + " n'est pas présent dans la base de données")
+					with open("BDD_save.txt", "a") as fichier_texte:
+						fichier_texte.write("\n" + str(choice) + " ")
+						fichier_texte.close()
+
 					with connection.cursor() as cursor:
-						sql = "INSERT INTO `CATEGORIES` (`NOM`,`LINK_OFF`) VALUES (%s, %s)"
+						sql = "INSERT INTO CATEGORIES (`NOM`,`LINK_OFF`) VALUES (%s, %s)"
 						cursor.execute(sql, (name_categories, link_categories))
-					mode_substitut_categorie.append(temp_categorie)
 					connection.commit()
 					Add_product()
 					print(transition)
 					select_and_substitut()
+
 
 			except ValueError :
 				print("\nOops! {} est une lettre, veuillez recommencer : \n".format(keyboard_input))
@@ -374,7 +353,7 @@ while continu == 0 :
 			print(transition)
 			print("Voici vos produits : \n ")
 			with connection.cursor() as cursor:
-				sql = "SELECT `NOM`,`STORE`,`SUBSTITUT_ID` FROM `SUBSTITUT`"
+				sql = "SELECT `NOM`,`STORE`,`SUBSTITUT_ID` FROM SUBSTITUTS"
 				cursor.execute(sql, ())
 				my_product = cursor.fetchall()
 				my_product = str(my_product)

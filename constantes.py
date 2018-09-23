@@ -9,3 +9,6 @@ PORT = 3306
 NAME_CATEGORIES = ['bordeaux', 'pates-a-tartiner-au-chocolat', 'Bières_françaises', 'Barres_chocolatées', 'Sorbets', 'steaks', 'Avocats']
 
 """constantes name tables"""
+CATEGORIES = "`CATEGORIES`"
+PRODUITS = "`PRODUIT`"
+SUBSTITUTS = "`SUBSTITUT`"
