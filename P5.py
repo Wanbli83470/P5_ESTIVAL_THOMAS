@@ -6,7 +6,6 @@ import pymysql.cursors
 import math
 import copy
 from constantes import *
-from gestion_BDD import *
 """CONNECT TO THE DATABASE"""
 try :
 	connection = pymysql.connect(host=HOST, #variable in file constantes.py
@@ -18,6 +17,23 @@ try :
 		                             cursorclass=pymysql.cursors.DictCursor)
 except :
 		print("erreur de connexion")
+
+"""gestion files txt"""
+fichier_texte = open("BDD_save.txt", "a")
+def delete_txt():
+	"""On ouvre le fichier_texte avec le mode write pour supprimer son contenu"""
+	fichier_texte = open("BDD_save.txt", "w")
+	fichier_texte.write("Liste de mes catégories produits dans ma BDD :")
+	"""On ferme le fichier_texte"""
+	fichier_texte.close()
+
+"""on attribue le contenu du fichier_texte à une variable"""
+read_txt = str
+with open("BDD_save.txt", "r") as fichier_texte:
+	for l in fichier_texte :
+		read_txt = l
+"""on test si la catégorie est presente dans la variable donc dans le fichier_texte"""
+
 
 def cleaning_tables():
 
@@ -113,7 +129,7 @@ def Add_product():
 	"""liens catégorie figé"""
 	l = str
 	l = r
-	"""lecture json"""
+	"""read_txt json"""
 	product = r.json()
 	"""on remplie la liste des produits"""
 	AlimenterListeProduit()
@@ -300,7 +316,29 @@ while continu == 0 :
 				keyboard_input = input ("choissisez votre catégorie de produit : " + propostion)
 				keyboard_input = int(keyboard_input)
 				choice = str
+				choice = categories[keyboard_input - 1]
 				name_categories = str
+
+				if choice in read_txt and keyboard_input in nb_series :
+					print(choice + " est bien présent dans la base de données")
+					name_categories = categories[keyboard_input - 1]
+					link_categories = link(l = keyboard_input - 1)
+					link_categories = link(l = keyboard_input - 1)
+					select_and_substitut()
+				else :
+					print(choice + " n'est pas présent dans la base de données")
+					with open("BDD_save.txt", "a") as fichier_texte:
+						fichier_texte.write("\n" + choice + " ")
+						fichier_texte.close()
+
+					with connection.cursor() as cursor:
+						sql = "INSERT INTO `CATEGORIES` (`NOM`,`LINK_OFF`) VALUES (%s, %s)"
+						cursor.execute(sql, (name_categories, link_categories))
+					mode_substitut_categorie.append(temp_categorie)
+					connection.commit()
+					Add_product()
+					print(transition)
+					select_and_substitut()
 
 				if keyboard_input in nb_series :
 					choice = categories[keyboard_input - 1]
@@ -311,7 +349,7 @@ while continu == 0 :
 				elif keyboard_input not in nb_series :
 					print("{} n'est pas dans les numéros proposés\n".format(keyboard_input))
 					break
-
+					"""a supprimer"""
 				if keyboard_input in mode_substitut_categorie :
 					print("catégories {} existante dans la BDD".format(name_categories))
 					select_and_substitut()

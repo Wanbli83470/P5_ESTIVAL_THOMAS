@@ -10,4 +10,12 @@ Guide d'installation du programme :
 
 5 Installer les paquets et les dépendances à l'aide de la commande "pip install -r requirements.txt"
 
-6 Exécuter le fichier P5.py en indiquant dans le terminal "python P5.py"
+6 Exécuter le fichier P5.py en indiquant dans le terminal "python P5.py" en ayant pris soins d'activer l'environnement virtuel.
+
+Configuration de la base MYSQL :
+Le fichier constantes.py vous permet en premier lieu de modifier :
+le nom de la base de données, l'hote, le mot de passe ainsi que le port.
+
+De plus il vous est possible d'ajouter le téléchargement d'une catégorie en ajoutant celle-ci à l'intérieur de la liste "NAME_CATEGORIES" en séparant son nom d'une virgule et en contant la chaine de caracètre entre guillemets.
+
+De plus si vous souhaitez modifier le nom des tables vous pouvez modifier celle-ci dans le fichier BDD.sql avant la création de votre BDD. Puis dans un second temps en modifiant le contenue des variables correspondantes dans constantes.py

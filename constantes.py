@@ -8,4 +8,4 @@ PORT = 3306
 """categories"""
 NAME_CATEGORIES = ['bordeaux', 'pates-a-tartiner-au-chocolat', 'Bières_françaises', 'Barres_chocolatées', 'Sorbets', 'steaks', 'Avocats']
 
-"""constantes name categories"""
+"""constantes name tables"""
