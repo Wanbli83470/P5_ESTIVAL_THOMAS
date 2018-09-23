@@ -34,42 +34,22 @@ with open("BDD_save.txt", "r") as fichier_texte:
 		read_txt = l
 
 
-def cleaning_tables():
+def cleaning_tables(NAME_TABLE = CATEGORIES):
 
 	"""CLEANING TABLES"""
 
 	with connection.cursor() as cursor:
-		sql = "DELETE FROM PRODUITS"
+		sql = "DELETE FROM %s;" %(NAME_TABLE)
 		cursor.execute(sql, ())
 		connection.commit()
-
-	with connection.cursor() as cursor:
-		sql = "DELETE FROM CATEGORIES;"
-		cursor.execute(sql, ())
-		connection.commit()
-
-	with connection.cursor() as cursor:
-		sql = "DELETE FROM SUBSTITUTS;"
-		cursor.execute(sql, ())
-		connection.commit()
-def reset_counter():
+def reset_counter(NAME_TABLE = CATEGORIES):
 	"""RESET THE COUNTERS"""
 
 	with connection.cursor() as cursor:
-		sql = "ALTER TABLE CATEGORIES AUTO_INCREMENT=0;"
+		sql = "ALTER TABLE %s AUTO_INCREMENT=0;" % (NAME_TABLE)
 		cursor.execute(sql, ())
 		connection.commit()
 
-	with connection.cursor() as cursor:
-		sql = "ALTER TABLE PRODUITS AUTO_INCREMENT=0;"
-		cursor.execute(sql, ())
-		connection.commit()
-
-	with connection.cursor() as cursor:
-		sql = "ALTER TABLE SUBSTITUTS AUTO_INCREMENT=0;"
-		cursor.execute(sql, ())
-		connection.commit()
-		"""CLEANING FILES TXT"""
 """LINK PRODUCT CATEGORY"""
 categories = NAME_CATEGORIES #variable in file constantes.py
 """generate question"""
@@ -90,7 +70,6 @@ def link(l = 0) :
 	return link_categories
 """test fonction"""
 link_categories = link(l = 2)
-print(type(link_categories))
 """condition for add product"""
 
 
@@ -198,7 +177,7 @@ def Add_product():
 	try :
 		while liste_position < nb_product :
 			with connection.cursor() as cursor:
-			    sql = "INSERT INTO PRODUITS (`NOM`,`PRODUIT_URL`,`NUTRISCORE`, `CATEGORIE_ID`) VALUES (%s, %s, %s, %s)"
+			    sql = "INSERT INTO PRODUIT (`NOM`,`PRODUIT_URL`,`NUTRISCORE`, `CATEGORIE_ID`) VALUES (%s, %s, %s, %s)"
 			    cursor.execute(sql, (name[liste_position], url[liste_position], ns_number[liste_position], N_ID))
 
 			connection.commit()
@@ -211,7 +190,7 @@ def Add_product():
 def select_and_substitut():
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUITS INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUIT INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE >= 3 LIMIT 10"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		result = str(result)
@@ -223,7 +202,7 @@ def select_and_substitut():
 
 	with connection.cursor() as cursor:
 
-		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUITS INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5 "
+		sql = "SELECT PRODUIT.NOM, PRODUIT.PRODUIT_ID FROM PRODUIT INNER JOIN CATEGORIES ON PRODUIT.CATEGORIE_ID = CATEGORIES.ID WHERE CATEGORIES.NOM = %s AND NUTRISCORE <	3 LIMIT 5"
 		cursor.execute(sql, (name_categories))
 		result = cursor.fetchall()
 		result = str(result)
@@ -236,7 +215,7 @@ def select_and_substitut():
 	print(transition)
 	with connection.cursor() as cursor:
 
-		sql = "SELECT `PRODUIT_URL` FROM PRODUITS WHERE `PRODUIT_ID`=%s"
+		sql = "SELECT `PRODUIT_URL` FROM PRODUIT WHERE `PRODUIT_ID`=%s"
 		cursor.execute(sql, (choice_substitut))
 		link_result = cursor.fetchall()
 
@@ -274,7 +253,7 @@ def select_and_substitut():
 			if save_BDD == 1 :
 				print("Enregistrement en cours...")
 				with connection.cursor() as cursor:
-					sql = "INSERT INTO SUBSTITUTS (`NOM`,`STORE`,`SUBSTITUT_URL`,`DESCRIPTION`) VALUES (%s, %s, %s, %s)"
+					sql = "INSERT INTO SUBSTITUT (`NOM`,`STORE`,`SUBSTITUT_URL`,`DESCRIPTION`) VALUES (%s, %s, %s, %s)"
 					cursor.execute(sql, (product_name, stores, link_url, description))
 
 					connection.commit()
@@ -353,7 +332,7 @@ while continu == 0 :
 			print(transition)
 			print("Voici vos produits : \n ")
 			with connection.cursor() as cursor:
-				sql = "SELECT `NOM`,`STORE`,`SUBSTITUT_ID` FROM SUBSTITUTS"
+				sql = "SELECT `NOM`,`STORE`,`SUBSTITUT_ID` FROM SUBSTITUT"
 				cursor.execute(sql, ())
 				my_product = cursor.fetchall()
 				my_product = str(my_product)
@@ -373,8 +352,12 @@ while continu == 0 :
 
 		if terminal_mode == 4 :
 			delete_txt()
-			cleaning_tables()
-			reset_counter()
+			cleaning_tables(NAME_TABLE = PRODUITS)
+			cleaning_tables(NAME_TABLE = CATEGORIES)
+			cleaning_tables(NAME_TABLE = SUBSTITUTS)
+			reset_counter(NAME_TABLE = CATEGORIES)
+			reset_counter(NAME_TABLE = PRODUITS)
+			reset_counter(NAME_TABLE = SUBSTITUTS)
 
 		elif terminal_mode > 4 :
 			print("{} n'est pas dans les numéros proposés\n".format(terminal_mode))

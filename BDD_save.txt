@@ -1,4 +1,1 @@
 Liste de mes catégories produits dans ma BDD :
-bordeaux 
-pates-a-tartiner-au-chocolat 
-Bières_françaises 
